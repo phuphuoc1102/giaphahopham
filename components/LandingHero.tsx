@@ -61,10 +61,10 @@ export default function LandingHero({ siteName }: LandingHeroProps) {
           </h1>
 
           <p className="text-lg sm:text-xl md:text-2xl text-stone-600 max-w-2xl mx-auto leading-relaxed font-light">
-            Gìn giữ và lưu truyền những giá trị, cội nguồn và truyền thống tốt
-            đẹp của dòng họ cho các thế hệ mai sau. Khách truy cập có thể xem dữ
-            liệu gia phả ngay cả khi chưa đăng nhập; chỉ cần đăng nhập khi muốn
-            sửa đổi hoặc thêm thông tin.
+            Tại thôn An Long (trước đây là An Thiện), xã Núi Thành, thành phố Đà
+            Nẵng, đây là nơi gia đình và dòng họ có thể ghi chép, lưu trữ và
+            chia sẻ cây phả hệ của mình. Giữ gìn và truyền tải những giá trị,
+            cội nguồn và truyền thống tốt đẹp đến các thế hệ tương lai.
           </p>
         </motion.div>
 
