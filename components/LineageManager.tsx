@@ -31,7 +31,7 @@ interface ComputedUpdate {
 
 // ─── Algorithm helpers ────────────────────────────────────────────────────────
 
-function computeGenerations(
+export function computeGenerations(
   persons: Person[],
   relationships: Relationship[],
 ): Map<string, number> {

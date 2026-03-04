@@ -37,14 +37,50 @@ export default function DashboardViews({
     );
 
     let finalRootId = rootId;
+    console.log("[DashboardViews] incoming rootId", rootId);
 
-    // If no rootId is provided, fallback to the earliest created person
+    // If no rootId coming from dashboard context, pick root similarly to
+    // server: first look for explicit generation===1, otherwise fall back to
+    // any person without a parent sorted by birth_year.
     if (!finalRootId || !pMap.has(finalRootId)) {
-      const rootsFallback = persons.filter((p) => !childIds.has(p.id));
-      if (rootsFallback.length > 0) {
-        finalRootId = rootsFallback[0].id;
-      } else if (persons.length > 0) {
-        finalRootId = persons[0].id; // ultimate fallback
+      // pick generation 1 if exists
+      const gen1 = persons.filter((p) => p.generation === 1);
+      console.log(
+        "[DashboardViews] gen1 candidates",
+        gen1.map((p) => p.full_name),
+      );
+      if (gen1.length > 0) {
+        gen1.sort((a, b) => {
+          const bya = a.birth_year ?? Number.MAX_SAFE_INTEGER;
+          const byb = b.birth_year ?? Number.MAX_SAFE_INTEGER;
+          return bya - byb;
+        });
+        finalRootId = gen1[0].id;
+        console.log("[DashboardViews] chosen gen1 root", gen1[0].full_name);
+      } else {
+        const rootsFallback = persons.filter((p) => !childIds.has(p.id));
+        console.log(
+          "[DashboardViews] rootsFallback list",
+          rootsFallback.map((p) => p.full_name),
+        );
+        if (rootsFallback.length > 0) {
+          rootsFallback.sort((a, b) => {
+            const bya = a.birth_year ?? Number.MAX_SAFE_INTEGER;
+            const byb = b.birth_year ?? Number.MAX_SAFE_INTEGER;
+            return bya - byb;
+          });
+          finalRootId = rootsFallback[0].id;
+          console.log(
+            "[DashboardViews] chosen fallback root",
+            rootsFallback[0].full_name,
+          );
+        } else if (persons.length > 0) {
+          finalRootId = persons[0].id; // ultimate fallback
+          console.log(
+            "[DashboardViews] no fallback, using first person",
+            persons[0].full_name,
+          );
+        }
       }
     }
 
