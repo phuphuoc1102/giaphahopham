@@ -1,155 +1,53 @@
-# Gia Phả OS (Gia Phả Open Source)
+# Gia Phả OS
 
-Đây là mã nguồn mở cho ứng dụng quản lý gia phả dòng họ, cung cấp giao diện trực quan để xem sơ đồ phả hệ, quản lý thành viên và tìm kiếm danh xưng.
+Gia Phả OS là ứng dụng nguồn mở dành cho việc tạo và quản lý cây gia phả,
+phù hợp cho các dòng họ, gia đình muốn lưu trữ thông tin cội nguồn một
+cách trực quan và tự chủ. Mọi dữ liệu được đặt trong tài khoản Supabase
+của bạn; phần mềm chỉ cung cấp giao diện và logic, không thu thập gì từ
+phía tác giả.
 
-Dự án ra đời từ nhu cầu thực tế: cần một hệ thống Cloud để con cháu ở nhiều nơi có thể cùng cập nhật thông tin (kết hôn, sinh con...), thay vì phụ thuộc vào một máy cục bộ. Việc tự triển khai mã nguồn mở giúp gia đình bạn nắm trọn quyền kiểm soát dữ liệu nhạy cảm, thay vì phó mặc cho các dịch vụ bên thứ ba. Ban đầu mình chỉ làm cho gia đình sử dụng, nhưng vì được nhiều người quan tâm nên mình quyết định chia sẻ công khai.
+## Chạy trên máy cá nhân
 
-Phù hợp với người Việt Nam.
+Yêu cầu: [Node.js](https://nodejs.org) và [Bun](https://bun.sh/) đã cài.
 
-## Mục lục
+1. Clone repository:
 
-- [Các tính năng chính](#các-tính-năng-chính)
-- [Demo](#demo)
-- [Hình ảnh Giao diện](#hình-ảnh-giao-diện)
-- [Cài đặt và Chạy dự án](#cài-đặt-và-chạy-dự-án)
-  - [Cách 1: Deploy nhanh lên Vercel](#cách-1-deploy-nhanh-lên-vercel)
-  - [Cách 2: Chạy trên máy cá nhân](#cách-2-chạy-trên-máy-cá-nhân)
-- [Tài khoản đầu tiên](#tài-khoản-đầu-tiên)
-- [Xử lý lỗi khi đăng ký](#xử-lý-lỗi-khi-đăng-ký)
-- [Phân quyền người dùng (User Roles)](#phân-quyền-người-dùng-user-roles)
-- [Đóng góp (Contributing)](#đóng-góp-contributing)
-- [Tuyên bố từ chối trách nhiệm & Quyền riêng tư](#tuyên-bố-từ-chối-trách-nhiệm--quyền-riêng-tư)
-- [Giấy phép (License)](#giấy-phép-license)
-
-## Các tính năng chính
-
-- **Sơ đồ trực quan**: Xem gia phả dạng Cây (Tree) và Sơ đồ tư duy (Mindmap).
-- **Tìm danh xưng**: Tự động xác định cách gọi tên (Bác, Chú, Cô, Dì...) chính xác.
-- **Quản lý thành viên**: Lưu trữ thông tin, avatar và sắp xếp thứ tự nhánh dòng họ.
-- **Quản lý quan hệ**: Quản lý các mối quan hệ trong gia phả (hỗ trợ các trường hợp đặc biệt như đa thê, đa phu,...).
-- **Thống kê & Sự kiện**: Theo dõi ngày giỗ và các chỉ số nhân khẩu học của dòng họ.
-- **Sao lưu dữ liệu**: Xuất/nhập file JSON, CSV, GEDCOM để lưu trữ hoặc di chuyển dễ dàng.
-- **Bảo mật**: Phân quyền (Admin, Editor, Member) và bảo vệ dữ liệu bằng Supabase.
-- **Đa thiết bị**: Giao diện hiện đại, tối ưu cho cả máy tính và điện thoại.
-
-## Demo
-
-- Demo: [giapha-os.homielab.com](https://giapha-os.homielab.com)
-- Tài khoản: `giaphaos@homielab.com`
-- Mật khẩu: `giaphaos`
-
-## Hình ảnh Giao diện
-
-![Dashboard](docs/screenshots/dashboard.png)
-
-![Danh sách](docs/screenshots/list.png)
-
-![Sơ đồ cây](docs/screenshots/tree.png)
-
-![Mindmap](docs/screenshots/mindmap.png)
-
-![Mindmap](docs/screenshots/stats.png)
-
-![Mindmap](docs/screenshots/kinship.png)
-
-![Mindmap](docs/screenshots/events.png)
-
-More screenshots: [docs/screenshots/](docs/screenshots/)
-
-## Cài đặt và Chạy dự án
-
-Chỉ cần khoảng 10 -> 15 phút là bạn có thể tự dựng hệ thống gia phả cho gia đình mình.
-
----
-
-## 1. Tạo Database (Miễn phí với Supabase)
-
-1. Tạo tài khoản miễn phí tại https://github.com nếu chưa có.
-2. Tạo tài khoản miễn phí tại https://supabase.com nếu chưa có (khuyên dùng đăng ký bằng tài khoản GitHub cho nhanh).
-3. Tạo **New Project**. Đợi khoảng 1 -> 2 phút để hệ thống khởi tạo xong.
-4. Vào **Project Settings → API**, giữ lại 2 giá trị này để dùng ở bước tiếp theo:
-   - `Project URL`
-   - `Project API Keys`
-
----
-
-## Cách 1: Deploy nhanh lên Vercel
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fhomielab%2Fgiapha-os&env=SITE_NAME,NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY)
-
-1. Tạo tài khoản miễn phí tại https://vercel.com nếu chưa có (khuyên dùng đăng ký bằng tài khoản GitHub cho nhanh).
-2. Nhấn nút Deploy bên trên.
-3. Điền các biến môi trường đã lưu ở **bước 1**:
-   - `NEXT_PUBLIC_SUPABASE_URL` = `Project URL`
-   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY` = `Project API Keys`
-4. Nhấn **Deploy** và chờ 2 -> 3 phút.
-
-Bạn sẽ có một đường link website để sử dụng ngay.
-
----
-
-## Cách 2: Chạy trên máy cá nhân
-
-Yêu cầu: máy đã cài [Node.js](https://nodejs.org/en) và [Bun](https://bun.sh/)
-
-1. Clone hoặc tải project về máy.
-2. Đổi tên file `.env.example` thành `.env.local`.
-3. Mở file `.env.local` và điền các giá trị đã lưu ở **bước 1**.
-
-```env
-NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY="your-anon-key"
+```bash
+git clone https://github.com/phuphuoc1102/ancestor-tree.git
+cd ancestor-tree
 ```
 
-4. Cài thư viện
+2. Copy file môi trường và chỉnh lại `SUPABASE` của bạn:
+
+```bash
+cp .env.example .env.local
+echo "NEXT_PUBLIC_SUPABASE_URL=\"https://your-project.supabase.co\"" >> .env.local
+echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=\"your-anon-key\"" >> .env.local
+```
+
+3. Cài phụ thuộc và chạy dev server:
 
 ```bash
 bun install
-```
-
-5. Chạy dự án
-
-```bash
 bun run dev
 ```
 
-Mở trình duyệt và truy cập: `http://localhost:3000`
+4. Mở trình duyệt đến `http://localhost:3000`.
+
+Sau khi khởi động, bạn có thể đăng ký tài khoản để thử cập nhật dữ liệu.
+Xem dữ liệu vẫn hoạt động với người dùng chưa đăng nhập.
+
+## Mục đích dự án
+
+Phát triển cho gia phả họ Phạm (An Long/An Thiện, Núi Thành, Đà Nẵng) và
+thuần Việt, nhưng toàn bộ mã nguồn được mở để ai cũng tự triển khai trên
+mạng riêng của mình. Chúng tôi hướng tới một giải pháp đơn giản, nhẹ,
+và tự lưu trữ để người dùng hoàn toàn kiểm soát dữ liệu nhạy cảm của
+họ.
 
 ---
 
-## Tài khoản đầu tiên
-
-- Đăng ký tài khoản mới khi vào web lần đầu.
-- Người đăng ký đầu tiên sẽ tự động có quyền **admin**.
-- Các tài khoản đăng ký sau sẽ mặc định là **member**.
-
-> Giờ đây trang cho phép **xem dữ liệu phả hệ mà không cần đăng nhập**;
-> chỉ khi muốn thêm/sửa/xóa thông tin mới phải sử dụng tài khoản.
-> Tuy nhiên các thao tác quản trị vẫn chỉ dành cho người dùng đã đăng
-> nhập và có quyền phù hợp.
-
-## Xử lý lỗi khi đăng ký
-
-Sau khi cài đặt xong, nếu bạn gặp lỗi `Failed to fetch` khi đăng ký:
-
-**Nguyên nhân:** Supabase chặn các request từ domain chưa được thêm vào danh sách cho phép.
-
-**Cách khắc phục:**
-
-1. Vào [Supabase Dashboard](https://supabase.com/dashboard) → chọn Project của bạn.
-2. Vào **Authentication → URL Configuration**.
-3. Ở mục **Site URL**, điền URL chính của ứng dụng, ví dụ:
-   - Vercel: `https://giapha-os.vercel.app`
-   - Máy cá nhân: `http://localhost:3000`
-4. Ở mục **Redirect URLs**, nhấn **Add URL** và thêm:
-   - `https://giapha-os.vercel.app/**`
-   - `http://localhost:3000/**` (nếu chạy local)
-5. Nhấn **Save** và thử lại.
-
-> **Lưu ý:** Thay `giapha-os.vercel.app` bằng domain thực tế của bạn. Nếu dùng domain tùy chỉnh, hãy thêm cả domain đó vào danh sách.
-
----
-
+Giấy phép MIT — xem phần dưới cùng của file gốc để biết chi tiết.
 ## Phân quyền người dùng (User Roles)
 
 Hệ thống có 3 cấp độ phân quyền để dễ dàng quản lý ai được phép cập nhật gia phả:
