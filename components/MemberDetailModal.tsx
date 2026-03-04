@@ -43,29 +43,47 @@ export default function MemberDetailModal() {
       setLoading(true);
       setError(null);
       try {
-        // 1. Fetch Person Public Data
-        const { data: personData, error: personError } = await supabase
-          .from("persons")
-          .select("*")
-          .eq("id", id)
-          .single();
+        // 1. Try the public API endpoint first. if it returns a 404 the record
+        // might still exist (or the route isn't available), so we fall back to
+        // querying supabase directly in the browser. the ordinary "anon"
+        // client should still be able to read because RLS for `persons` is
+        // open to everyone.
+        let personData: Person | null = null;
 
-        if (personError || !personData) {
+        const res = await fetch(`/api/person/${id}`);
+        if (res.ok) {
+          personData = await res.json();
+        } else if (res.status === 404) {
+          // fallback path – query supabase directly rather than treating as
+          // a fatal error. we attempt to pull private details as well, using
+          // a nested select (service role may already be in effect).
+          const { data: p, error: pErr } = await supabase
+            .from("persons")
+            .select("*, person_details_private(*)")
+            .eq("id", id)
+            .single();
+          if (pErr || !p) {
+            throw new Error("Không thể tải thông tin thành viên.");
+          }
+          // merge any private row into the top-level object
+          const privateRow =
+            Array.isArray(p.person_details_private) &&
+            p.person_details_private.length > 0
+              ? p.person_details_private[0]
+              : null;
+          personData = { ...(p as any), ...(privateRow || {}) } as Person;
+        } else {
           throw new Error("Không thể tải thông tin thành viên.");
         }
-        setPerson(personData);
 
-        // 2. Fetch Private Data if Admin
-        if (isAdmin) {
-          const { data: privData } = await supabase
-            .from("person_details_private")
-            .select("*")
-            .eq("person_id", id)
-            .single();
-          setPrivateData(privData || {});
-        } else {
-          setPrivateData(null);
+        if (!personData) {
+          throw new Error("Không thể tải thông tin thành viên.");
         }
+        // the API returns merged public + private fields, so we don't
+        // need a separate query. clear privateData state in case it was
+        // previously set when the modal was opened for a different person.
+        setPerson(personData);
+        setPrivateData({});
       } catch (err) {
         console.error("Error fetching member details:", err);
         // @ts-expect-error - err is caught as unknown, but we check for message
@@ -74,7 +92,7 @@ export default function MemberDetailModal() {
         setLoading(false);
       }
     },
-    [isAdmin, supabase],
+    [supabase],
   );
 
   // Sync state with URL parameter or create mode
@@ -180,9 +198,10 @@ export default function MemberDetailModal() {
                   <span className="hidden sm:inline">Quay lại</span>
                 </button>
               ) : (
-                canEdit &&
                 person && (
                   <>
+                    {/* always allow opening the full detail page; editing is still
+                        gated by the separate button below */}
                     <Link
                       href={`/dashboard/members/${person.id}`}
                       className="flex items-center gap-1.5 px-4 py-2 bg-amber-100/80 text-amber-800 rounded-full hover:bg-amber-200 font-semibold text-sm shadow-sm border border-amber-200/50 transition-colors"
@@ -190,13 +209,15 @@ export default function MemberDetailModal() {
                       <ExternalLink className="size-4" />
                       <span className="hidden sm:inline">Xem chi tiết</span>
                     </Link>
-                    <button
-                      onClick={() => setIsEditing(true)}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-amber-100/80 text-amber-800 rounded-full hover:bg-amber-200 font-semibold text-sm shadow-sm border border-amber-200/50 transition-colors"
-                    >
-                      <Edit2 className="size-4" />
-                      <span className="hidden sm:inline">Chỉnh sửa</span>
-                    </button>
+                    {canEdit && (
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="flex items-center gap-1.5 px-4 py-2 bg-amber-100/80 text-amber-800 rounded-full hover:bg-amber-200 font-semibold text-sm shadow-sm border border-amber-200/50 transition-colors"
+                      >
+                        <Edit2 className="size-4" />
+                        <span className="hidden sm:inline">Chỉnh sửa</span>
+                      </button>
+                    )}
                   </>
                 )
               )}

@@ -11,10 +11,12 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 // level security policies don't block reads. mutate operations in
 // client components still rely on the normal browser client which uses
 // the anon key and the user's session.
-export const createClient = (
-  cookieStore: Awaited<ReturnType<typeof cookies>>,
+export const createClient = async (
+  cookieStoreOrPromise: Awaited<ReturnType<typeof cookies>> | Promise<Awaited<ReturnType<typeof cookies>>>,
   opts?: { useServiceRole?: boolean },
 ) => {
+  // the caller may pass a promise (if they forgot to await cookies()).
+  const cookieStore = await cookieStoreOrPromise;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const useServiceRole = opts?.useServiceRole && serviceRoleKey;
 

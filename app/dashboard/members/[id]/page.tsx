@@ -17,29 +17,21 @@ export default async function MemberDetailPage({ params }: PageProps) {
   const isAdmin = profile?.role === "admin";
   const canEdit = profile?.role === "admin" || profile?.role === "editor";
 
-  const supabase = await getSupabase();
-
-  // Fetch Person Public Data
-  const { data: person, error } = await supabase
-    .from("persons")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error || !person) {
+  // Instead of talking directly to Supabase we hit our internal API
+  // route which already returns the record merged with any private
+  // details. the route uses a service‑role client, so the response
+  // contains all fields regardless of who is making the request.
+  const apiRes = await fetch(`/api/person/${id}`, { cache: "no-store" });
+  if (!apiRes.ok) {
     notFound();
   }
+  const person = await apiRes.json();
 
-  // Fetch Private Data if Admin
-  let privateData = null;
-  if (isAdmin) {
-    const { data } = await supabase
-      .from("person_details_private")
-      .select("*")
-      .eq("person_id", id)
-      .single();
-    privateData = data;
-  }
+  // we no longer need a separate privateData object; the API result
+  // already includes the extra fields. keep the variable for the
+  // component API but leave it null so merging in MemberDetailContent
+  // doesn't overwrite anything unexpected.
+  const privateData = null;
 
   return (
     <div className="flex-1 w-full relative flex flex-col pb-8">

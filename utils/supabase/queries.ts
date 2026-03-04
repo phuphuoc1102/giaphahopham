@@ -13,14 +13,14 @@ export const getSupabase = cache(async () => {
   // visitors. mutation operations (in client components) will still run
   // through the browser client which uses the anon key and the user's
   // session token.
-  let supabase = createClient(cookieStore);
+  let supabase = await createClient(cookieStore);
   try {
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      supabase = createClient(cookieStore, { useServiceRole: true });
+      supabase = await createClient(cookieStore, { useServiceRole: true });
     }
   } catch {
     // ignore – if auth call fails just fall back to anon client
