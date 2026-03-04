@@ -78,7 +78,11 @@ export default async function DashboardLayout({
         <DashboardHeader showMenu={!!user} />
         {!user && (
           <div className="bg-amber-100 text-amber-900 text-center py-2 px-4">
-            Bạn đang xem dữ liệu ở chế độ khách. <Link href="/login" className="underline font-semibold">Đăng nhập</Link> để có thể thêm hoặc chỉnh sửa.
+            Bạn đang xem dữ liệu ở chế độ khách.{" "}
+            <Link href="/login" className="underline font-semibold">
+              Đăng nhập
+            </Link>{" "}
+            để có thể thêm hoặc chỉnh sửa.
           </div>
         )}
         {children}
