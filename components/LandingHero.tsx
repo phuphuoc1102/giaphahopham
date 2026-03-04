@@ -62,7 +62,9 @@ export default function LandingHero({ siteName }: LandingHeroProps) {
 
           <p className="text-lg sm:text-xl md:text-2xl text-stone-600 max-w-2xl mx-auto leading-relaxed font-light">
             Gìn giữ và lưu truyền những giá trị, cội nguồn và truyền thống tốt
-            đẹp của dòng họ cho các thế hệ mai sau.
+            đẹp của dòng họ cho các thế hệ mai sau. Khách truy cập có thể xem dữ
+            liệu gia phả ngay cả khi chưa đăng nhập; chỉ cần đăng nhập khi muốn
+            sửa đổi hoặc thêm thông tin.
           </p>
         </motion.div>
 
@@ -74,11 +76,11 @@ export default function LandingHero({ siteName }: LandingHeroProps) {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-16 bg-amber-500/30 blur-2xl rounded-full z-0 hidden sm:block"></div>
 
           <Link
-            href="/login"
+            href="/dashboard"
             className="group inline-flex items-center justify-center gap-2 px-8 py-4 sm:px-10 sm:py-5 text-base sm:text-lg font-bold text-white bg-stone-900 border border-stone-800 hover:bg-stone-800 hover:border-stone-700 rounded-2xl shadow-xl shadow-stone-900/10 hover:shadow-2xl hover:shadow-stone-900/20 transition-all duration-300 hover:-translate-y-1 active:translate-y-0 w-full sm:w-auto overflow-hidden relative"
           >
             <span className="relative z-10 flex items-center gap-3">
-              Đăng nhập để xem thông tin
+              Xem dữ liệu (không cần đăng nhập)
               <ArrowRight className="size-5 group-hover:translate-x-1.5 transition-transform" />
             </span>
           </Link>

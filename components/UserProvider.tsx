@@ -21,24 +21,40 @@ export function UserProvider({
   profile,
 }: {
   children: ReactNode;
-  user: User | null;
-  profile: Profile | null;
+  user?: User | null;
+  profile?: Profile | null;
 }) {
   const supabase = useMemo(() => createClient(), []);
   const isAdmin = profile?.role === "admin";
   const isEditor = profile?.role === "editor" || isAdmin;
 
-  return (
-    <UserContext.Provider value={{ user, profile, isAdmin, isEditor, supabase }}>
-      {children}
-    </UserContext.Provider>
-  );
+  // provide sensible defaults when no user is present so that
+  // client components can read from context without needing to
+  // guard against undefined.
+  const value = {
+    user: user ?? null,
+    profile: profile ?? null,
+    isAdmin: Boolean(isAdmin),
+    isEditor: Boolean(isEditor),
+    supabase,
+  };
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
 
 export function useUser() {
   const context = useContext(UserContext);
   if (context === undefined) {
-    throw new Error("useUser must be used within a UserProvider");
+    // return a default object instead of throwing — this makes it
+    // safe to call useUser() even when there is no provider (for
+    // example, during testing or on anonymous layout routes).
+    return {
+      user: null,
+      profile: null,
+      isAdmin: false,
+      isEditor: false,
+      supabase: createClient(),
+    };
   }
   return context;
 }

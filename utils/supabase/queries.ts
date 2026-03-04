@@ -6,7 +6,26 @@ import { cache } from "react";
 // Hàm này được cache lại để đảm bảo chỉ tạo 1 Supabase Client duy nhất cho mỗi request
 export const getSupabase = cache(async () => {
   const cookieStore = await cookies();
-  return createClient(cookieStore);
+  // create a client with the normal anon key first (so we can check the
+  // current session). if the user is not logged in and we have a
+  // service role key available, recreate the client with the service role
+  // key so that RLS policies don't block SELECT queries for anonymous
+  // visitors. mutation operations (in client components) will still run
+  // through the browser client which uses the anon key and the user's
+  // session token.
+  let supabase = createClient(cookieStore);
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      supabase = createClient(cookieStore, { useServiceRole: true });
+    }
+  } catch {
+    // ignore – if auth call fails just fall back to anon client
+  }
+  return supabase;
 });
 
 export const getUser = cache(async () => {

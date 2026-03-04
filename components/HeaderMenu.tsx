@@ -13,6 +13,19 @@ export default function HeaderMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // if no user is present just show a simple login link instead of
+  // the dropdown menu; this handles the anonymous case gracefully.
+  if (!user) {
+    return (
+      <Link
+        href="/login"
+        className="px-4 py-2 text-sm font-medium text-stone-700 bg-amber-100 rounded-lg hover:bg-amber-200 transition-colors"
+      >
+        Đăng nhập
+      </Link>
+    );
+  }
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {

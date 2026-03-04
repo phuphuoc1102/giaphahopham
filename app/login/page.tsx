@@ -154,8 +154,8 @@ export default function LoginPage() {
             </h2>
             <p className="mt-3 text-sm text-stone-500 font-medium tracking-wide">
               {isLogin
-                ? "Đăng nhập để truy cập gia phả."
-                : "Tạo tài khoản thành viên mới."}
+                ? "Đăng nhập để chỉnh sửa dữ liệu (xem không cần đăng nhập)."
+                : "Tạo tài khoản để quản lý và chỉnh sửa dữ liệu."}
             </p>
             {isDemo && (
               <motion.div

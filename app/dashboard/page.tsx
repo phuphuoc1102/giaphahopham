@@ -235,7 +235,7 @@ export default async function DashboardLaunchpad() {
                 <p className="text-stone-500 text-center font-medium px-4">
                   Không có sự kiện nào trong 30 ngày tới.
                 </p>
-                <div className="flex items-center gap-2 text-sm text-stone-400 mt-1 font-medium group-hover:text-stone-600 transition-colors">
+                <div className="flex items-center gap-2 text-xl text-black-400 mt-1 font-bold group-hover:text-stone-600 transition-colors">
                   <span>Xem sự kiện trong năm</span>
                   <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
                 </div>

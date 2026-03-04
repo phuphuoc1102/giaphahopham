@@ -3,7 +3,12 @@ import HeaderMenu from "@/components/HeaderMenu";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function DashboardHeader() {
+export interface DashboardHeaderProps {
+  /** show the authenticated user menu; if false we render a login link */
+  showMenu?: boolean;
+}
+
+export default function DashboardHeader({ showMenu }: DashboardHeaderProps) {
   return (
     <header className="sticky top-0 z-30 bg-white/80 border-b border-stone-200 shadow-sm transition-all duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -27,7 +32,16 @@ export default function DashboardHeader() {
           </Link>
         </div>
         <div className="flex items-center gap-4">
-          <HeaderMenu />
+          {showMenu ? (
+            <HeaderMenu />
+          ) : (
+            <Link
+              href="/login"
+              className="px-4 py-2 text-sm font-medium text-stone-700 bg-amber-100 rounded-lg hover:bg-amber-200 transition-colors"
+            >
+              Đăng nhập
+            </Link>
+          )}
         </div>
       </div>
     </header>

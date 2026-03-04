@@ -171,8 +171,12 @@ DROP POLICY IF EXISTS "Admins can view all profiles" ON public.profiles;
 CREATE POLICY "Admins can view all profiles" ON public.profiles FOR SELECT USING (public.is_admin());
 
 -- PERSONS POLICIES
+-- let anyone (including unauthenticated browsers) fetch person rows;
+-- we will still require login on the client side before performing any
+-- INSERT/UPDATE/DELETE because those operations check the session or
+-- rely on role-based policies.
 DROP POLICY IF EXISTS "Enable read access for authenticated users" ON public.persons;
-CREATE POLICY "Enable read access for authenticated users" ON public.persons FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Enable read access for everyone" ON public.persons FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Admins can manage persons" ON public.persons;
 DROP POLICY IF EXISTS "Admins can insert persons" ON public.persons;
@@ -191,8 +195,9 @@ DROP POLICY IF EXISTS "Admins can manage private details" ON public.person_detai
 CREATE POLICY "Admins can manage private details" ON public.person_details_private FOR ALL TO authenticated USING (public.is_admin());
 
 -- RELATIONSHIPS POLICIES
+-- allow guests to read relationships too
 DROP POLICY IF EXISTS "Enable read access for authenticated users" ON public.relationships;
-CREATE POLICY "Enable read access for authenticated users" ON public.relationships FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Enable read access for everyone" ON public.relationships FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Admins can manage relationships" ON public.relationships;
 DROP POLICY IF EXISTS "Admins can insert relationships" ON public.relationships;
@@ -206,8 +211,9 @@ CREATE POLICY "Admins can delete relationships" ON public.relationships FOR DELE
 -- CUSTOM_EVENTS POLICIES
 ALTER TABLE public.custom_events ENABLE ROW LEVEL SECURITY;
 
+-- read access for custom_events should not require login
 DROP POLICY IF EXISTS "Enable read access for authenticated users" ON public.custom_events;
-CREATE POLICY "Enable read access for authenticated users" ON public.custom_events FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Enable read access for everyone" ON public.custom_events FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Authenticated users can insert custom events" ON public.custom_events;
 CREATE POLICY "Authenticated users can insert custom events" ON public.custom_events FOR INSERT TO authenticated WITH CHECK (auth.uid() = created_by);

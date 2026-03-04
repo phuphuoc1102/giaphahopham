@@ -47,16 +47,21 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected routes
-  const protectedPaths = ["/dashboard"];
-  const isProtectedPath = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path),
-  );
-
+  // previously the entire /dashboard tree was considered protected
+  // and anonymous visitors were redirected to login. we now allow
+  // anonymous read‑only access; individual pages perform their own role
+  // checks and show "access denied" if necessary. only the login route
+  // still needs special handling below.
   const isLoginPage = request.nextUrl.pathname.startsWith("/login");
 
-  // Check if DB schema is initialized by checking if profiles table exists
-  if (isProtectedPath || isLoginPage) {
+  // Schema check: we still want to detect uninitialised projects when
+  // someone hits either the login page or any dashboard URL in order to
+  // send them to the setup screen. keep using startsWith rather than the
+  // old `isProtectedPath` boolean.
+  if (
+    isLoginPage ||
+    request.nextUrl.pathname.startsWith("/dashboard")
+  ) {
     const { error: profileError } = await supabase
       .from("profiles")
       .select("id")
@@ -72,12 +77,9 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  if (isProtectedPath && !user) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
-  }
+  // the only redirect we keep is moving logged‑in users away from the
+  // login screen; we no longer force visitors to log in before viewing
+  // any part of /dashboard.
 
   // Redirect users who are already logged in away from the login page
   if (isLoginPage && user) {

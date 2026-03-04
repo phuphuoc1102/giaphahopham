@@ -123,6 +123,11 @@ Mở trình duyệt và truy cập: `http://localhost:3000`
 - Người đăng ký đầu tiên sẽ tự động có quyền **admin**.
 - Các tài khoản đăng ký sau sẽ mặc định là **member**.
 
+> Giờ đây trang cho phép **xem dữ liệu phả hệ mà không cần đăng nhập**;
+> chỉ khi muốn thêm/sửa/xóa thông tin mới phải sử dụng tài khoản.
+> Tuy nhiên các thao tác quản trị vẫn chỉ dành cho người dùng đã đăng
+> nhập và có quyền phù hợp.
+
 ## Xử lý lỗi khi đăng ký
 
 Sau khi cài đặt xong, nếu bạn gặp lỗi `Failed to fetch` khi đăng ký:

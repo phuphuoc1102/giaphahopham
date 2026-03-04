@@ -14,14 +14,12 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const user = await getUser();
+  const profile = user ? await getProfile(user.id) : null;
 
-  if (!user) {
-    redirect("/login");
-  }
-
-  const profile = await getProfile(user.id);
-
-  if (!profile?.is_active) {
+  // if a logged-in user exists but their profile is not active, show the
+  // pending screen. anonymous visitors are not redirected and can continue
+  // browsing.
+  if (user && !profile?.is_active) {
     return (
       <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
         <header className="sticky top-0 z-30 bg-white/80 border-b border-stone-200 shadow-sm transition-all duration-200">
@@ -75,9 +73,14 @@ export default async function DashboardLayout({
   }
 
   return (
-    <UserProvider user={user} profile={profile}>
+    <UserProvider user={user ?? null} profile={profile ?? null}>
       <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans">
-        <DashboardHeader />
+        <DashboardHeader showMenu={!!user} />
+        {!user && (
+          <div className="bg-amber-100 text-amber-900 text-center py-2 px-4">
+            Bạn đang xem dữ liệu ở chế độ khách. <Link href="/login" className="underline font-semibold">Đăng nhập</Link> để có thể thêm hoặc chỉnh sửa.
+          </div>
+        )}
         {children}
         <Footer
           className="mt-auto bg-white border-t border-stone-200"
